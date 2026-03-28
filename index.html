@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="refresh" content="900">
+<title>EcoHub — Frigorifico 5 estrelas</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c0c0e; --surface: #141417; --surface2: #1c1c21;
+    --border: #2a2a32; --green: #22c55e; --text: #e8e8f0;
+    --text-muted: #888899; --card-bg: #18181d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  .header {
+    background: linear-gradient(135deg, #0c0c0e 0%, #141428 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 32px; display: flex; align-items: center;
+    justify-content: space-between; position: sticky; top: 0; z-index: 100;
+  }
+  .logo {
+    font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800;
+    background: linear-gradient(135deg, #6c63ff, #a78bfa);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .client-name { font-size: 13px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; margin-top: 4px; }
+  .header-stats { display: flex; gap: 16px; align-items: center; }
+  .stat-pill {
+    display: flex; align-items: center; gap: 8px; background: var(--surface2);
+    border: 1px solid var(--border); border-radius: 100px;
+    padding: 6px 14px; font-size: 12px; font-weight: 500;
+  }
+  .stat-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .updated { font-size: 11px; color: var(--text-muted); }
+  .main { max-width: 1400px; margin: 0 auto; padding: 32px 24px; }
+  .section-title {
+    font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted);
+    margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+  }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .campaign-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; margin-bottom: 16px; overflow: hidden; transition: border-color 0.2s;
+  }
+  .campaign-card:hover { border-color: #3a3a4a; }
+  .campaign-header {
+    display: flex; align-items: center; gap: 16px; padding: 20px 24px;
+    cursor: pointer; user-select: none; transition: background 0.15s;
+  }
+  .campaign-header:hover { background: rgba(108,99,255,0.04); }
+  .campaign-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: linear-gradient(135deg, #6c63ff22, #6c63ff44);
+    border: 1px solid #6c63ff44;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .campaign-info { flex: 1; min-width: 0; }
+  .campaign-name {
+    font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+    color: var(--text); white-space: nowrap; overflow: hidden;
+    text-overflow: ellipsis; margin-bottom: 4px;
+  }
+  .campaign-meta { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .badge { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 100px; text-transform: uppercase; }
+  .badge-active { background: #22c55e22; color: #22c55e; border: 1px solid #22c55e44; }
+  .badge-obj { background: #6c63ff22; color: #a78bfa; border: 1px solid #6c63ff33; font-size: 10px; padding: 2px 8px; border-radius: 100px; }
+  .campaign-count { font-size: 12px; color: var(--text-muted); flex-shrink: 0; }
+  .campaign-arrow { color: var(--text-muted); transition: transform 0.3s; font-size: 18px; flex-shrink: 0; }
+  .campaign-arrow.open { transform: rotate(180deg); }
+  .campaign-body { display: none; border-top: 1px solid var(--border); padding: 24px; }
+  .campaign-body.open { display: block; animation: fadeIn 0.2s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+  .ads-label {
+    font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 14px;
+  }
+  .ads-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+  .ad-card {
+    background: var(--card-bg); border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    display: flex; flex-direction: column;
+  }
+  .ad-card:hover { transform: translateY(-2px); border-color: #3a3a50; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+  .ad-thumb {
+    position: relative; width: 100%; aspect-ratio: 1/1;
+    background: var(--surface2); overflow: hidden; cursor: pointer;
+  }
+  .ad-thumb img {
+    width: 100%; height: 100%; object-fit: cover;
+    display: block; transition: transform 0.3s;
+  }
+  .ad-card:hover .ad-thumb img { transform: scale(1.04); }
+  .ad-thumb-placeholder {
+    width: 100%; height: 100%; display: flex;
+    align-items: center; justify-content: center;
+    color: var(--text-muted); font-size: 28px;
+  }
+  .play-overlay {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.25); transition: background 0.2s;
+  }
+  .ad-thumb:hover .play-overlay { background: rgba(108,99,255,0.35); }
+  .play-circle {
+    width: 46px; height: 46px; border-radius: 50%;
+    background: rgba(0,0,0,0.6); border: 2px solid rgba(255,255,255,0.8);
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.2s;
+  }
+  .ad-thumb:hover .play-circle { transform: scale(1.1); }
+  .play-circle svg { width: 20px; height: 20px; fill: #fff; margin-left: 3px; }
+  .ad-info { padding: 10px 12px 8px; flex: 1; }
+  .ad-name {
+    font-size: 11px; font-weight: 500; color: var(--text);
+    line-height: 1.4; margin-bottom: 6px;
+    display: -webkit-box; -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .btn-ver {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    margin: 0 12px 12px; padding: 7px 10px;
+    background: rgba(108,99,255,0.1); border: 1px solid rgba(108,99,255,0.3);
+    border-radius: 8px; color: #a78bfa; font-size: 10px; font-weight: 700;
+    text-decoration: none; transition: all 0.2s ease; letter-spacing: 0.3px;
+  }
+  .btn-ver:hover { background: rgba(108,99,255,0.25); }
+  .btn-ver svg { width: 12px; height: 12px; fill: #a78bfa; flex-shrink: 0; }
+  .footer {
+    text-align: center; padding: 32px; color: var(--text-muted);
+    font-size: 12px; border-top: 1px solid var(--border); margin-top: 48px;
+  }
+  @media (max-width: 600px) {
+    .header { padding: 16px; flex-wrap: wrap; gap: 12px; }
+    .header-stats { display: none; }
+    .ads-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="logo">EcoHub</div>
+    <div class="client-name">Frigorifico 5 estrelas — Meta Ads</div>
+  </div>
+  <div class="header-stats">
+    <div class="stat-pill"><span class="stat-dot"></span> 4 campanhas ativas</div>
+    <div class="stat-pill"><span style="width:6px;height:6px;border-radius:50%;background:#6c63ff;box-shadow:0 0 6px #6c63ff;display:inline-block"></span> 4 criativos ativos</div>
+    <div class="updated">Atualizado: 27/03/2026 às 23:31</div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="section-title">Campanhas ativas</div>
+  <div id="container"></div>
+</div>
+
+<div class="footer">EcoHub · Frigorifico 5 estrelas · Atualizado automaticamente a cada 15 minutos · 27/03/2026 às 23:31</div>
+
+<script>
+const CAMPS = [{"id": "120225813812120292", "name": "Captação | [VIDEOVIEW] [FRIO]", "objective": "OUTCOME_ENGAGEMENT", "ads": [{"id": "120237254152620292", "name": "AD04 - Reels tanta gente", "image_url": "https://scontent-for2-2.xx.fbcdn.net/v/t15.5256-10/643572821_1573864700573381_3524335635660343385_n.jpg?_nc_cat=100&ccb=1-7&_nc_eui2=AeH-vuNd4LwbszLa4nfFJNwxDH_al5XgotoMf9qXleCi2v5nTFccuCRrv-GjMyK2ujEsacU5ovRaiUKgf7RIvZn2&_nc_ohc=K3xhRAv-TYAQ7kNvwEuqX0P&_nc_oc=AdojZSSxoQYpNumqfUQEHfvoazlq8IZ4QfUQiyEhjSWt0zhd5leuNAc5I8cZeGKBZDxAUVlUkCpMA-Rg4qrhzAvB&_nc_zt=23&_nc_ht=scontent-for2-2.xx&edm=AOgd6ZUEAAAA&_nc_gid=H0UuAhaGAzW_2D0Uh0wJGQ&_nc_tpa=Q5bMBQGpHnLueYZ1buHgkilDme1U33dydTgNMyqvbV9m3KNA_JqePeiGEZdL8Z9lQOQx5OzPWGOJQUqbmQ&stp=c0.5000x0.5000f_dst-emg0_p64x64_q75_tt6&ur=5fad0e&_nc_sid=58080a&oh=00_Afw3ImIrZXPpzSL3EKQ-v_umTQPqFQ5sssDtXMdH2fT7DA&oe=69CD03CE", "link": "https://www.facebook.com/396033160249999/posts/122145916160420766", "is_video": true}]}, {"id": "120225756452770292", "name": "Publicação do Instagram: Vocês estão animados??? 🤩🎊🔥", "objective": "LINK_CLICKS", "ads": [{"id": "120225756453600292", "name": "Publicação do Instagram: Vocês estão animados??? 🤩🎊🔥", "image_url": "https://scontent-for2-2.xx.fbcdn.net/v/t15.5256-10/512741371_1155747052978174_3288170061823539717_n.jpg?_nc_cat=109&ccb=1-7&_nc_eui2=AeGZC9GU0C8-Bk5cu1yEtkJQLTKVLtnHQXgtMpUu2cdBeKIEmBTmsE_nMvMkpjqArI6ZIuidnrdnZwiqz8AdH5V0&_nc_ohc=qQe3OhP65gwQ7kNvwHc6TyQ&_nc_oc=AdrYGW1ijnJqOAT0tLnQNW3L3PcRTmu31WW_qgL3hfMytRGbHVh-4pHp1bIQOvhhj87zNNgSs_EMAjizMEbA5Y6O&_nc_zt=23&_nc_ht=scontent-for2-2.xx&edm=AOgd6ZUEAAAA&_nc_gid=H0UuAhaGAzW_2D0Uh0wJGQ&_nc_tpa=Q5bMBQESWcSsN1yc7t5OfEdcD6DgPOOT5H0o9kN12KN6vwyhAJIs4j9h51ksl1AJbYMvBs3NjkSaTlALfw&stp=c0.5000x0.5000f_dst-emg0_p64x64_q75_tt6&ur=a7ce7f&_nc_sid=58080a&oh=00_Afyseded1pnNaHnRE9qpWE2CthZT4IJ1fYvj77ZA5-1GkQ&oe=69CD1241", "link": "https://www.facebook.com/396033160249999/posts/1155747022978177", "is_video": true}]}, {"id": "120225028485220292", "name": "Publicação do Instagram: Não tem tempo ruim nem...", "objective": "LINK_CLICKS", "ads": [{"id": "120225028485700292", "name": "Publicação do Instagram: Não tem tempo ruim nem...", "image_url": "https://scontent-for2-2.xx.fbcdn.net/v/t15.5256-10/508405495_570822099429734_2406218784722257576_n.jpg?_nc_cat=107&ccb=1-7&_nc_eui2=AeE05SloHV3ySBRfkopQPWdVap0PvH0oorFqnQ-8fSiiseXDFn83qF3QYAqVIqVk-a1nhz9T7fip8Mo7seOtg-A5&_nc_ohc=TVPc7F6z2CcQ7kNvwEDb-yH&_nc_oc=AdoU6_2zDnqgFgdpVboql1ayjas7WIs3814_K3DhZ5I_wGf5lJbYoD7SRDyI3yDhgr9MvFwE7ht7BD3Rp2S4pIb4&_nc_zt=23&_nc_ht=scontent-for2-2.xx&edm=AOgd6ZUEAAAA&_nc_gid=H0UuAhaGAzW_2D0Uh0wJGQ&_nc_tpa=Q5bMBQE8L7qUudiLQcA8CVjf70ahyhhCNwVYrx4ZOSs0HAq0Rt3tO1ly_zFAjM7ZDb46byECzarRILWqWA&stp=c0.5000x0.5000f_dst-emg0_p64x64_q75_tt6&ur=a7ce7f&_nc_sid=58080a&oh=00_AfxMpUPPP2Xx0vf0W1AchmEKDc_xT2N7COqkuIseoeNokQ&oe=69CD129B", "link": "https://www.facebook.com/396033160249999/posts/570822072763070", "is_video": true}]}, {"id": "120227370420830292", "name": "Publicação do Instagram: JÁ ESTAMOS NOS...", "objective": "LINK_CLICKS", "ads": [{"id": "120227370420970292", "name": "Publicação do Instagram: JÁ ESTAMOS NOS...", "image_url": "https://scontent-for2-2.xx.fbcdn.net/v/t15.5256-10/524904473_3600840593379228_3128659348348542274_n.jpg?_nc_cat=108&ccb=1-7&_nc_eui2=AeGcGVQ67QHTLb2CQNLyY3mVMVG1Tyi4xKwxUbVPKLjErHIgmj6R13tJVqAVaH45gKffC2nspTTp-0EbpkSVejJ2&_nc_ohc=rx91QDdXkCgQ7kNvwFXWF2p&_nc_oc=Adp-LcklcW16WUS0FgRunF__mBcJJHfi4YMZ5_cYUKzq65-24l1ibuQM34TAxQf6YvfqkynVnQcODeDlUtLGi0rs&_nc_zt=23&_nc_ht=scontent-for2-2.xx&edm=AOgd6ZUEAAAA&_nc_gid=H0UuAhaGAzW_2D0Uh0wJGQ&_nc_tpa=Q5bMBQG5kx3_io31c5kFR4KnDSbYjOjNBvDVByC_K9t2YJgyWoJfEmzPz3WslFN-96_ATerbH0eYTRFqVQ&stp=c0.5000x0.5000f_dst-emg0_p64x64_q75_tt6&ur=a7ce7f&_nc_sid=58080a&oh=00_AfxAdpjzitAosUweqBSjNGPtOalJMS7vO-klxl9swlUudA&oe=69CD1589", "link": "https://www.facebook.com/396033160249999/posts/3600840570045897", "is_video": true}]}];
+const ICONS = ['🎯','📣','🔥','⚡','💡','🚀','🎪'];
+const OBJ = {
+  'LINK_CLICKS':'Cliques no link','OUTCOME_TRAFFIC':'Tráfego',
+  'OUTCOME_AWARENESS':'Alcance','OUTCOME_ENGAGEMENT':'Engajamento',
+  'OUTCOME_LEADS':'Leads','OUTCOME_SALES':'Vendas'
+};
+
+const PLAY_ICON = `<div class="play-overlay"><div class="play-circle"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>`;
+const EXT_ICON  = `<svg viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>`;
+
+CAMPS.forEach((camp, idx) => {
+  const obj  = OBJ[camp.objective] || camp.objective;
+  const icon = ICONS[idx % ICONS.length];
+
+  const adsHTML = camp.ads.length === 0
+    ? '<div style="padding:24px;text-align:center;color:#888899">🖼️ Nenhum criativo</div>'
+    : camp.ads.map(ad => {
+        const thumbHTML = ad.image_url
+          ? `<img src="${ad.image_url}" alt="${ad.name}" onerror="this.style.display='none'">`
+          : `<div class="ad-thumb-placeholder">🖼️</div>`;
+
+        const playHTML = ad.is_video ? PLAY_ICON : '';
+
+        const thumbClick = ad.link
+          ? `onclick="window.open('${ad.link}','_blank')" style="cursor:pointer"`
+          : '';
+
+        const btnHTML = ad.link
+          ? `<a class="btn-ver" href="${ad.link}" target="_blank">${EXT_ICON} ${ad.is_video ? 'Ver vídeo no Facebook' : 'Ver no Facebook'}</a>`
+          : '';
+
+        return `<div class="ad-card">
+          <div class="ad-thumb" ${thumbClick}>${thumbHTML}${playHTML}</div>
+          <div class="ad-info"><div class="ad-name">${ad.name}</div></div>
+          ${btnHTML}
+        </div>`;
+      }).join('');
+
+  const el = document.createElement('div');
+  el.className = 'campaign-card';
+  el.innerHTML = `
+    <div class="campaign-header" onclick="toggle(${idx})">
+      <div class="campaign-icon">${icon}</div>
+      <div class="campaign-info">
+        <div class="campaign-name">${camp.name}</div>
+        <div class="campaign-meta">
+          <span class="badge badge-active">Ativo</span>
+          <span class="badge-obj">${obj}</span>
+        </div>
+      </div>
+      <div class="campaign-count">${camp.ads.length} criativo${camp.ads.length !== 1 ? 's' : ''}</div>
+      <div class="campaign-arrow" id="arrow-${idx}">⌄</div>
+    </div>
+    <div class="campaign-body" id="body-${idx}">
+      <div class="ads-label">Criativos ativos</div>
+      <div class="ads-grid">${adsHTML}</div>
+    </div>`;
+  document.getElementById('container').appendChild(el);
+});
+
+function toggle(idx) {
+  document.getElementById('body-' + idx).classList.toggle('open');
+  document.getElementById('arrow-' + idx).classList.toggle('open');
+}
+</script>
+</body>
+</html>
